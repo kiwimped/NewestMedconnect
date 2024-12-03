@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { UserContext } from "../../context/userContext";
+import { Navigate } from "react-router-dom";
 
 export default function Account() {
     const { user, setUser } = useContext(UserContext);
@@ -30,7 +31,10 @@ export default function Account() {
             alert('User updated successfully');
         }
     };
-
+    if(!user){
+        return <Navigate to="/loginNEW" />;
+    }
+    if(user){
     return (
         <div>
             <h1>ACCOUNT</h1>
@@ -57,4 +61,5 @@ export default function Account() {
             {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
     );
+}
 }

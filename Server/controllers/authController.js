@@ -137,49 +137,7 @@ const updateUser = async (req,res)=>{
         res.status(500).json({ error: 'Server error' });
     }
 }
-// update user endpoint
-/*
-const updateUser = async (req, res) => {
-    try {
-        const { name, password } = req.body;
-        const { token } = req.cookies;
 
-        if (!token) {
-            return res.json({ error: 'No token found, please log in.' });
-        }
-
-        // Verify the token
-        jwt.verify(token, process.env.JWT_SECRET, async (err, decodedUser) => {
-            if (err) {
-                return res.json({ error: 'Invalid or expired token' });
-            }
-
-            // Find the user by ID from the decoded token
-            const user = await User.findById(decodedUser.id);
-            if (!user) {
-                return res.json({ error: 'User not found' });
-            }
-
-            // Update user data
-            if (name) {
-                user.name = name;
-            }
-
-            if (password) {
-                // Hash new password
-                user.password = await hashPassword(password);
-            }
-
-            await user.save(); // Save the updated user
-
-            return res.json(user);
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Server error' });
-    }
-};
-*/
 const logoutUser = (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,

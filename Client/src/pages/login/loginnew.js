@@ -18,8 +18,13 @@ export default function LoginNEW(){
             if(data.error){
                 toast.error(data.error)
             }else{
+                if (data.token) {
+                    localStorage.setItem('authToken', data.token); // Add the token to localStorage
+                    
+                }
                 setData({});
-                navigate('/')
+                    navigate('/')
+                
             }
         } catch (error) {
             console.log(error)

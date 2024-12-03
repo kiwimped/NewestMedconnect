@@ -1,7 +1,15 @@
 
 import React, { useState } from "react"; // Import React and the useState hook
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
+import { useNavigate } from 'react-router-dom'
+import { Navigate } from "react-router-dom";
+
 
 export const Appointments = () => {
+  const { user } = useContext(UserContext)
+  const navigate = useNavigate()
+
   // State variables
   const [userType, setUserType] = useState(""); // Tracks whether the user is a Doctor or Patient
   const [provider, setProvider] = useState(""); // Tracks the selected health care provider
@@ -24,8 +32,15 @@ export const Appointments = () => {
       setConfirmation("Please fill out all fields.");
     }
   };
-
+  if(!user){
+    return(
+      <Navigate to="/loginNEW" />
+    )
+  }
+  if(user)
   return (
+    
+    
     <div className="App">
       <h1>Health Care App</h1> {/* App Title */}
 

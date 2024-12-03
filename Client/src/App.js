@@ -15,6 +15,7 @@ import axios from 'axios'
 import {Toaster} from 'react-hot-toast'
 import { UserContextProvider } from "./context/userContext";
 import Logout from "./pages/login/logout";
+import './styles.css';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
