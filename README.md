@@ -38,8 +38,10 @@ Run the folder in VScode, and be sure to type npm install in both directories (y
 ## Extras:
 Make sure that the directories(i.e. functions or constants) that are called in the code go to their intended folder and file.
 Also, make sure that any of the dependencies of the react project from the images below are in their package.json file.
-Client:
 
-Server:
+## Client:
+![alt text](file:///C:/Users/mahad/OneDrive/Pictures/Screenshots/Screenshot%202024-12-11%20173743.png)
+
+## Server:
 
 
