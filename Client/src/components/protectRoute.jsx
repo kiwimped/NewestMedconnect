@@ -7,7 +7,7 @@ export const ProtectRoute = ({ children, role }) => {
   
   const {user} = useContext(UserContext)
 
-  if (!user.name) {
+  if (!user) {
     return <Navigate to="/login" />;
   }
 

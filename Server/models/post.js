@@ -1,7 +1,7 @@
-// models/appointment.js
-const mongoose = require('mongoose');
+// This will go in out models/post.js
 
-// Define the appointment schema
+const mongoose = require("mongoose");
+
 const postSchema = new mongoose.Schema({
   title: String,
   context: String,
@@ -11,6 +11,5 @@ const postSchema = new mongoose.Schema({
   rate: Number,
 });
 
-// Create and export the model
-const Poster = mongoose.model('PostReview', postSchema);
-module.exports = Poster;
+const PostReview = mongoose.model("PostReview", postSchema);
+module.exports = PostReview;

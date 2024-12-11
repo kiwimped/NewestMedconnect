@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ProtectRoute } from "../../components/protectRoute";
+import DoctorReview from "../../components/DoctorReview";
 
 
 export const DoctorDash = () => {
   const [todaysAppointments, setTodaysAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const doctorName = "Dr. John Doe"; 
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -55,6 +57,10 @@ export const DoctorDash = () => {
           </table>
         </section>
       </main>
+      <div>
+        <h1>Doctor Dashboard</h1>
+        <DoctorReview doctorName={doctorName} />
+      </div>
     </div>
   );
 };

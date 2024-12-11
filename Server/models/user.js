@@ -8,7 +8,8 @@ const userSchema = new Schema({
         unique: true
     },
     password: String,
-    isDoctor: Boolean
+    isDoctor: Boolean,
+    termAgree: Boolean
     
 })
 

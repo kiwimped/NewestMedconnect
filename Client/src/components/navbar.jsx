@@ -47,7 +47,6 @@ if(!user){
   return (
     <div className="navbar">
       <div className="links">
-        <Link to="/doctor">Doctor</Link>
         <Link to="/">
           <House size={32} />
         </Link>
@@ -64,7 +63,7 @@ if(!user){
           <Robot size={32} />
         </Link>
 
-        <Link to="/loginNEW">Login</Link>
+        <Link to="/login">Login</Link>
         
       </div>
       

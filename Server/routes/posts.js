@@ -6,13 +6,13 @@ const router = express.Router();
 router.post('/postreview', async (req, res) => {
     try {
       const { title, context, toName, rate } = req.body;
-      const fromName = req.user.name;  // Assume user info is attached to req.user
+      const fromName = req.body.name || "Anonymous";  // Assume user info is attached to req.user
       const date = new Date();         // Set the current date and time
   
       const newPost = new PostReview({ title, context, fromName, toName, date, rate });
   
       await newPost.save();
-      res.status(201).send('Posted Review stored successfully');
+      res.status(201).send('Posted Review stored successfully',newPost);
     } catch (error) {
       res.status(500).json({ message: 'Error saving Review', error });
     }

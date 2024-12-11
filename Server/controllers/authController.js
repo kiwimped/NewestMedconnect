@@ -1,36 +1,37 @@
 const User = require('../models/user')
-const {hashPassword,comparePassword} = require('../helpers/auth')
+const { hashPassword, comparePassword } = require('../helpers/auth')
 const jwt = require('jsonwebtoken');
+const NotificationModel = require('../models/notify')
+const nodemailer = require('nodemailer');
 
-
-const test = (req,res) =>{
+const test = (req, res) => {
     res.json('test is working')
 }
 
 
 //register endpoint
-const registerUser = async (req,res) =>{
+const registerUser = async (req, res) => {
     try {
-        const {name,email,password,isDoctor} = req.body;
+        const { name, email, password, isDoctor,termAgree } = req.body;
         // check if name entered
         if (typeof isDoctor !== 'boolean') {
             return res.status(400).json({
                 error: 'isDoctor field is required and must be a boolean'
             });
         }
-        if(!name) {
+        if (!name) {
             return res.json({
                 error: 'name is required'
             })
         }
         // check if password entered
-        if(!password || password.length < 6) {
+        if (!password || password.length < 6) {
             return res.json({
                 error: 'password is required, need 6 characters long'
             })
         }
         // check if email entered
-        const exist = await User.findOne({email}) 
+        const exist = await User.findOne({ email })
         if (exist) {
             return res.json({
                 error: 'email is taken'
@@ -44,10 +45,20 @@ const registerUser = async (req,res) =>{
         const user = await User.create({
             name,
             email,
-            password:hashedPassword,
-            isDoctor
+            password: hashedPassword,
+            isDoctor,
+            termAgree
         })
-        return res.json(user)
+        // Add a notification for the new user
+        const notification = await NotificationModel.create({
+            userId: user._id,
+            message: `Welcome, ${user.name}! Your account has been successfully created.`,
+        });
+
+        return res.status(201).json({ user, notification });
+
+
+
     } catch (error) {
         console.log(error)
     }
@@ -57,17 +68,17 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        
+
         if (!user) {
             return res.json({ error: 'No user found' });
         }
-        
+
         const match = await comparePassword(password, user.password);
-        
+
         if (match) {
             // Generate JWT
             const token = jwt.sign(
-                { email: user.email, id: user._id, name: user.name },
+                { email: user.email, id: user._id, name: user.name, isDoctor: user.isDoctor },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }  // Optionally set an expiry for the token
             );
@@ -78,6 +89,7 @@ const loginUser = async (req, res) => {
                 secure: false, // Set to true if using HTTPS
                 sameSite: 'Lax', // Prevent CSRF attacks
             }).json(user);
+
         } else {
             return res.json({ error: 'Incorrect password' });
         }
@@ -87,51 +99,59 @@ const loginUser = async (req, res) => {
     }
 };
 
-const getProfile = (req,res)=>{
+const getProfile = (req, res) => {
     console.log("Cookies received:", req.cookies); // Debugging
 
-      const {token} = req.cookies
-      if(token){
-        jwt.verify(token,process.env.JWT_SECRET,{},(err,user)=>{
-            if(err) throw err;
-            res.json(user)
-        })
-      }else{
+    const { token } = req.cookies
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedUser) => {
+            if (err) throw err;
+
+            // Fetch the full user details if needed
+            const user = await User.findById(decodedUser.id).select('name email isDoctor');
+            if (user) {
+                res.json(user); // Include isDoctor
+            } else {
+                res.json(null);
+            }
+        });
+    } else {
         res.json(null)
-      }
-}
-const updateUser = async (req,res)=>{
-    try {
-        const {name, password} =req.body;
-        const {token} = req.cookies;
-        
-        if(token){
-        jwt.verify(token,process.env.JWT_SECRET,async(err,decodedUser)=>{
-            if(err){
-                return res.json({error: 'Invalid or expired token'});
-            }
-
-            const user = await User.findById(decodedUser.id)
-            if(!user){
-                return res.json({error:'User not found'});
-            }
-            // Update user data
-            if (name) {
-                user.name = name;
-            }
-
-            if (password) {
-                // Hash new password
-                user.password = await hashPassword(password);
-            }
-
-            await user.save(); // Save the updated user
-
-            return res.json(user);
-        })
-    } else{
-        return res.json({error:'No token found, Login please.'})
     }
+}
+
+const updateUser = async (req, res) => {
+    try {
+        const { name, password } = req.body;
+        const { token } = req.cookies;
+
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, async (err, decodedUser) => {
+                if (err) {
+                    return res.json({ error: 'Invalid or expired token' });
+                }
+
+                const user = await User.findById(decodedUser.id)
+                if (!user) {
+                    return res.json({ error: 'User not found' });
+                }
+                // Update user data
+                if (name) {
+                    user.name = name;
+                }
+
+                if (password) {
+                    // Hash new password
+                    user.password = await hashPassword(password);
+                }
+
+                await user.save(); // Save the updated user
+
+                return res.json(user);
+            })
+        } else {
+            return res.json({ error: 'No token found, Login please.' })
+        }
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: 'Server error' });
@@ -147,11 +167,77 @@ const logoutUser = (req, res) => {
     return res.json({ message: 'Logged out successfully' });
 };
 
-module.exports ={
+const forgotpassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(400).json({ error: 'Email is required' });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+            tls: {
+                rejectUnauthorized: false, // Optional, can help in case of certificate issues
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Reset Password',
+            text: `Click the link to reset your password: http://localhost:3000/reset-password/`
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.error('Error sending email:', error); // Log email error
+                return res.status(500).json({ error: 'Failed to send email' });
+            } else {
+                console.log('Email sent:', info.response);
+                return res.json({ message: 'Password reset email sent successfully' });
+            }
+        });
+    } catch (error) {
+        console.error('Error in forgotpassword function:', error); // Log any other errors
+        return res.status(500).json({ error: 'Server error' });
+    }
+};
+const resetpassword = (req, res) => {
+    const {id, token} = req.params
+    const {password} = req.body
+
+    jwt.verify(token, "jwt_secret_key", (err, decoded) => {
+        if(err) {
+            return res.json({Status: "Error with token"})
+        } else {
+            bcrypt.hash(password, 10)
+            .then(hash => {
+                User.findByIdAndUpdate({_id: id}, {password: hash})
+                .then(u => res.send({Status: "Success"}))
+                .catch(err => res.send({Status: err}))
+            })
+            .catch(err => res.send({Status: err}))
+        }
+    })
+}
+module.exports = {
     test,
     registerUser,
     loginUser,
     getProfile,
     updateUser,
-    logoutUser
+    logoutUser,
+    forgotpassword,
+    resetpassword
 }

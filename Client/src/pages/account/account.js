@@ -32,7 +32,7 @@ export default function Account() {
         }
     };
     if(!user){
-        return <Navigate to="/loginNEW" />;
+        return <Navigate to="/login" />;
     }
     if(user){
     return (

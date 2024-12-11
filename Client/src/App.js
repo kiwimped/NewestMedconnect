@@ -2,10 +2,9 @@ import "./styles.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/navbar";
 import  Home  from "./pages/home/home";
-import { Login } from "./pages/login/login";
-import { Register } from "./pages/login/register";
 import  LoginNEW  from "./pages/login/loginnew";
 import  RegisterNEW  from "./pages/login/registernew";
+import ForgotPassword from "./pages/login/forgotPass";
 import { DoctorDash } from "./pages/doctor/DoctorDash";
 import  Account  from "./pages/account/account";
 import { Notification } from "./pages/notify/notification";
@@ -15,6 +14,9 @@ import axios from 'axios'
 import {Toaster} from 'react-hot-toast'
 import { UserContextProvider } from "./context/userContext";
 import Logout from "./pages/login/logout";
+import ProtectedRoutes from './components/ProtectedRoutes'
+import { Error } from "./pages/errors/error";
+import ResetPassword from "./pages/login/resetpassword";
 import './styles.css';
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -31,17 +33,19 @@ export default function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/loginNEW" element={<LoginNEW />} />
+          <Route path="/login" element={<LoginNEW />} />
           <Route path="/registerNEW" element={<RegisterNEW />} />
           <Route path="/account" element={<Account />} />
           <Route path="/notify" element={<Notification />} />
           <Route path="/appointments" element={<Appointments />} />
           <Route path="/AI" element={<AI />} />
           <Route path="/logout" element={<Logout/>} />
-
+          <Route path="/login/ForgotPassword" element={<ForgotPassword/>}/>
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route element={<ProtectedRoutes/>}>
           <Route path="/doctor" element={<DoctorDash />} />
+          </Route>
+          <Route path="/error"element={<Error/>}/>
         </Routes>
       </BrowserRouter>
 

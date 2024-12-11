@@ -12,7 +12,7 @@ export default function LoginNEW(){
         e.preventDefault()
         const {email,password} = data
         try {
-            const {data} = await axios.post('/loginNEW',{
+            const {data} = await axios.post('/login',{
                 email,password
             });
             if(data.error){
@@ -24,8 +24,9 @@ export default function LoginNEW(){
                 }
                 setData({});
                     navigate('/')
-                
+                    
             }
+            window.location.reload();
         } catch (error) {
             console.log(error)
         }
@@ -48,10 +49,20 @@ export default function LoginNEW(){
         >
           Register here
         </span>
+        
             
 
      
             </div>
+            <div>
+                Forgot Passord? {" "}
+        <span
+          style={{ color: "blue", cursor: "pointer" }}
+          onClick={() => navigate("/login/ForgotPassword")}
+        >
+          Forgot Password
+        </span>
+        </div>
         </div>
     )
 }
