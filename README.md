@@ -40,8 +40,10 @@ Make sure that the directories(i.e. functions or constants) that are called in t
 Also, make sure that any of the dependencies of the react project from the images below are in their package.json file.
 
 ## Client:
-![alt text](file:///C:/Users/mahad/OneDrive/Pictures/Screenshots/Screenshot%202024-12-11%20173743.png)
+![Screenshot](https://media.discordapp.net/attachments/495416328983805975/1316535466195161138/Screenshot_2024-12-11_173743.png?ex=675b66b3&is=675a1533&hm=59358c73049ccfe29fce9a004fe0446979d87f26d13b9459faf75f8e21a4eb17&=&format=webp&quality=lossless&width=482&height=570 "Screenshot Example")
 
 ## Server:
+![Screenshot](https://media.discordapp.net/attachments/495416328983805975/1316535947638341642/image.png?ex=675b6725&is=675a15a5&hm=8113a1517417a26fa38d0bb3c3c2fc5a797160c72f50f4ce1db7942ba3e44ded&=&format=webp&quality=lossless&width=492&height=570 "Screenshot Example")
+
 
 
