@@ -46,5 +46,6 @@ Also, make sure that any of the dependencies of the react project from the image
 ## Server:
 ![Screenshot](https://media.discordapp.net/attachments/495416328983805975/1316535947638341642/image.png?ex=675b6725&is=675a15a5&hm=8113a1517417a26fa38d0bb3c3c2fc5a797160c72f50f4ce1db7942ba3e44ded&=&format=webp&quality=lossless&width=492&height=570 "Screenshot Example")
 
+# Video on how it runs:
 
 
